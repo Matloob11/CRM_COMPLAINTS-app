@@ -30,7 +30,7 @@ backend logs to explain it.
 Either sync into the existing directory:
 
 ```sh
-rsync -a --delete frontend/dist/ /opt/a7-complaints/panel/
+rsync -a --delete dist/ /opt/a7-complaints/panel/
 chown -R 10001:10001 /opt/a7-complaints/panel
 ```
 

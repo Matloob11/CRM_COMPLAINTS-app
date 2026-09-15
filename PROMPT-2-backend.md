@@ -9,7 +9,7 @@ inventory, the chosen architecture, and the authentication design. Do not re-der
 
 You own **work package 2 of 3**. Another agent provisions the servers, nginx, TLS, and the
 Bitrix local-app registration; a third builds the React frontend. You build the Django
-application that lives in `./backend` and is containerised as `complaints-web`.
+application that lives at the repository root (`manage.py`, `apps/`, `complaints/`) and is containerised as `complaints-web`.
 
 Do not touch nginx, TLS, Docker Compose, or Bitrix portal configuration — those belong to
 work package 1. Do not write React components — those belong to work package 3. Your

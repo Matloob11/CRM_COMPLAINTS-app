@@ -1,7 +1,7 @@
 # Work package 3 — delivery report
 
 React 18 + Vite + TypeScript + Tailwind + TanStack Query SPA for the A7 Complaints system,
-built to static assets in `frontend/dist` for nginx to serve inside the Bitrix24 iframe.
+built to static assets in `dist/` for nginx to serve inside the Bitrix24 iframe.
 
 - `npm run test` — 23 tests, 3 files, all passing.
 - `npm run build` — typecheck clean (`tsc --noEmit`, `strict`, `noUncheckedIndexedAccess`), build
@@ -128,8 +128,8 @@ Also exercised live in the browser, without a screenshot:
 
 ## Notes for the other work packages
 
-- **Work package 1:** build with `npm ci && npm run build` in `frontend/`, deploy the contents of
-  `frontend/dist`. `index.html` must not be cached; `assets/*` is content-hashed and can be
+- **Work package 1:** build with `npm ci && npm run build` at the repository root, deploy the contents of
+  `dist/`. `index.html` must not be cached; `assets/*` is content-hashed and can be
   cached immutably. The app needs no headers beyond the CSP already specified and sets no cookies.
 - **Work package 2:** the bootstrap-HTML contract, the token shapes and the nine open API
   questions are in `README.md` and `docs/API-REQUESTS.md`.

@@ -16,9 +16,13 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY manage.py entrypoint.sh pytest.ini ./
+COPY apps ./apps
+COPY complaints ./complaints
+COPY tests ./tests
 
-RUN useradd --create-home --uid 10001 appuser \
+RUN chmod +x /app/entrypoint.sh \
+    && useradd --create-home --uid 10001 appuser \
     && mkdir -p /app/media /app/staticfiles /app/frontend-dist \
     && chown -R appuser:appuser /app
 

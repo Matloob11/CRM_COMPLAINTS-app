@@ -18,8 +18,8 @@ npm run typecheck
 
 | Item | Value |
 |---|---|
-| Build command | `npm ci && npm run build` (run in `frontend/`) |
-| Build output | `frontend/dist` — `index.html` plus `assets/` (hashed JS/CSS and one web worker) |
+| Build command | `npm ci && npm run build` (repository root) |
+| Build output | `dist/` — `index.html` plus `assets/` (hashed JS/CSS and one web worker) |
 | Deploy target | `/opt/a7-complaints/web` (copy the contents of `dist/`), served by nginx as the site root |
 | Routing | Single page, no client-side router. `/api/` and `/bitrix/` proxy to `127.0.0.1:8200`; everything else falls back to `index.html` |
 | Caching | `assets/*` is content-hashed and may be cached immutably. `index.html` must never be cached |

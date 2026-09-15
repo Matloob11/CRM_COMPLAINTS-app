@@ -11,7 +11,7 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const here = dirname(fileURLToPath(import.meta.url))
-const outDir = resolve(here, '..', '..', 'screenshots')
+const outDir = resolve(here, '..', 'screenshots')
 mkdirSync(outDir, { recursive: true })
 
 const BASE = process.env.BASE ?? 'http://127.0.0.1:5273'

@@ -4,12 +4,7 @@
 .env
 .env.*
 !.env.example
-!**/.env.example
-# Safe to commit: enables the in-browser mock API. Contains no secrets.
-!frontend/.env.development
-# Local Vite overrides may contain portal URLs or other private values.
-frontend/.env.local
-frontend/.env.*.local
+!.env.development
 *.pem
 *.key
 *.p12
@@ -41,16 +36,16 @@ htmlcov/
 *.sqlite3
 
 # Django runtime artifacts
-backend/media/
-backend/staticfiles/
-backend/frontend-dist/
+media/
+staticfiles/
+frontend-dist/
 
 # ---------------------------------------------------------------------------
-# Node / frontend
+# Node / SPA
 # ---------------------------------------------------------------------------
 node_modules/
-frontend/dist/
-frontend/dist-ssr/
+dist/
+dist-ssr/
 *.tsbuildinfo
 
 # ---------------------------------------------------------------------------

@@ -29,7 +29,7 @@ Write a `docker-compose.yml` with four services:
 
 | Service | Image | Binding |
 |---|---|---|
-| `complaints-web` | built from `./backend` | `127.0.0.1:8200 -> 8000` |
+| `complaints-web` | built from the repository-root `Dockerfile` | `127.0.0.1:8200 -> 8000` |
 | `complaints-worker` | same image, background jobs | internal only |
 | `complaints-postgres` | `postgres:16-alpine` | internal only, named volume |
 | `complaints-redis` | `redis:7-alpine` | internal only |
@@ -44,7 +44,7 @@ Constraints:
 - Media lives on a bind mount at `/opt/a7-complaints/media`, not inside a container layer.
 - Restart policy `unless-stopped` on every service.
 
-The backend agent supplies `./backend`. Until it lands, stub it with a minimal Dockerfile and
+The backend agent supplies the Django tree at the repository root. Until it lands, stub it with a minimal Dockerfile and
 a health endpoint so the stack can be brought up and proven end to end. Say clearly in your
 handover which parts are stubs.
 

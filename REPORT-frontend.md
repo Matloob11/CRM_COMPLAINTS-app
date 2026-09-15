@@ -1,7 +1,7 @@
 # Work package 3 — frontend report
 
-Deliverable: `frontend/` — React 18 + Vite + TypeScript + Tailwind + TanStack Query, built to
-static assets in `frontend/dist/`. Screenshots are in `screenshots/`.
+Deliverable: repository-root SPA — React 18 + Vite + TypeScript + Tailwind + TanStack Query, built to
+static assets in `dist/`. Screenshots are in `screenshots/`.
 
 Backend and infrastructure were not available while this was written, so every screen was built
 and verified against a **typed in-browser mock** of the work-package-2 contract
@@ -70,7 +70,7 @@ Also verified interactively in the browser, without a screenshot:
   wrapped in try/catch and degrade to a normal page when the SDK is absent, which is how the
   screenshots were taken.
 - **No request has hit the Django API.** All API shapes come from `PROMPT-2-backend.md`; the
-  open questions are written up in `frontend/docs/API-REQUESTS.md`.
+  open questions are written up in `docs/API-REQUESTS.md`.
 - **Upload was proven to 180 MB, not to multiple gigabytes.** The mock simulates ~40 MB/s. The
   code paths that matter at 2 GB (fixed-size slicing, worker hashing, chunk-driven progress,
   resume) are the same ones exercised at 180 MB, but the real ceiling depends on nginx
@@ -111,18 +111,17 @@ agent regardless.
 
 ## 5. Handshake the other work packages need
 
-- **Build output**: `frontend/dist/` (`index.html` + content-hashed `assets/`).
+- **Build output**: `dist/` (`index.html` + content-hashed `assets/`).
 - **Proposed deploy path on the VPS**: `/opt/a7-complaints/web/`, served as the nginx site root,
   with `/api/` and `/bitrix/` proxied to `127.0.0.1:8200` and everything else falling back to
   `index.html`. Cache `assets/*` hard; never cache `index.html`.
 - **Bootstrap contract**: `/bitrix/handler/` must render the shell and inject
   `window.__COMPLAINTS__ = { token, api_base }` before the module script. Two alternative shapes
-  are also accepted — see `frontend/docs/API-REQUESTS.md`.
+  are also accepted — see `docs/API-REQUESTS.md`.
 
 ## 6. Running it
 
 ```bash
-cd frontend
 npm install
 npm run dev:mock       # then open http://127.0.0.1:5273/?role=admin
 npm test
@@ -130,5 +129,5 @@ npm run build
 ```
 
 Mock scenarios (`?scenario=empty|slow|error|error-list|expired`, `?role=`, `?failSend=1`,
-`?incoming=3`) are documented in `frontend/README.md`; they are how every screenshot above was
+`?incoming=3`) are documented in `docs/SPA.md`; they are how every screenshot above was
 produced, and how the states can be re-checked after any change.

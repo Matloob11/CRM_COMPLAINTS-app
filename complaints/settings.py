@@ -209,7 +209,7 @@ USE_X_ACCEL_REDIRECT = env_bool("COMPLAINTS_USE_X_ACCEL_REDIRECT", not DEBUG)
 # Where work package 3 builds its Vite output. The handler reads
 # `<dist>/.vite/manifest.json` to find the hashed entry files it references
 # from the bootstrap HTML, so a frontend rebuild needs no backend change.
-FRONTEND_DIST = Path(env("COMPLAINTS_FRONTEND_DIST", str(BASE_DIR / "frontend-dist")))
+FRONTEND_DIST = Path(env("COMPLAINTS_FRONTEND_DIST", str(BASE_DIR / "dist")))
 FRONTEND_ASSET_BASE = env("COMPLAINTS_FRONTEND_ASSET_BASE", "/").rstrip("/") + "/"
 
 # Outbound notifications (n8n)

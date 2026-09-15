@@ -96,27 +96,24 @@ Internal notes (`is_internal`) are stripped from every agent-facing response, in
 ├── CONTEXT.md                ← product and infrastructure decisions
 ├── RUNBOOK.md                ← production operations
 ├── DEPLOY-NOTES.md           ← hard-won deploy pitfalls
-├── PROMPT-1-infra-and-bitrix.md
-├── PROMPT-2-backend.md
-├── PROMPT-3-frontend.md
 ├── .env.example              ← host environment template (no secrets)
-├── backend/                  ← Django project
-│   ├── apps/
-│   │   ├── accounts/         ← Bitrix handshake, JWT, users
-│   │   ├── tickets/          ← complaints, messages, stats, isolation
-│   │   ├── uploads/          ← resumable uploads and attachments
-│   │   ├── realtime/         ← SSE
-│   │   └── notifications/    ← outbound webhooks
-│   ├── complaints/           ← settings, URLs, Celery
-│   ├── Dockerfile
-│   └── requirements.txt
-├── frontend/                 ← React SPA
-│   ├── src/
-│   │   ├── api/              ← typed client and query hooks
-│   │   ├── features/         ← list, thread, compose, attachments, dashboard
-│   │   ├── lib/              ← auth bootstrap, BX24, uploads, status
-│   │   └── mocks/            ← in-browser API for local UI work
-│   └── docs/
+├── package.json              ← React / Vite
+├── src/                      ← SPA
+│   ├── api/                  ← typed client and query hooks
+│   ├── features/             ← list, thread, compose, attachments, dashboard
+│   ├── lib/                  ← auth bootstrap, BX24, uploads, status
+│   └── mocks/                ← in-browser API for local UI work
+├── manage.py                 ← Django
+├── apps/
+│   ├── accounts/             ← Bitrix handshake, JWT, users
+│   ├── tickets/              ← complaints, messages, stats, isolation
+│   ├── uploads/              ← resumable uploads and attachments
+│   ├── realtime/             ← SSE
+│   └── notifications/        ← outbound webhooks
+├── complaints/               ← Django settings, URLs, Celery
+├── tests/
+├── Dockerfile
+├── docs/                     ← SPA contract and reports
 └── screenshots/              ← UI reference captures
 ```
 
@@ -134,7 +131,7 @@ This repository is intended to hold **source and documentation only**.
 - Bitrix inbound webhook URLs (the path segment is a secret)
 - Database passwords
 
-Use `.env.example` and `backend/.env.example` as templates. On the server, the live file should be mode `0600` and owned by root.
+Use `.env.example` as the template. On the server, the live file should be mode `0600` and owned by root.
 
 The root `.gitignore` already excludes `.env`, key material, `node_modules`, build output, Django media, and large sample binaries.
 
@@ -167,10 +164,9 @@ If a secret was ever pasted into chat, a screenshot, or a previous archive, **ro
 
 ### Frontend with the mock API
 
-The SPA can be designed and tested before Django is running. `frontend/.env.development` sets `VITE_MOCK=1`. That mock is dynamically imported and is **absent** from production builds.
+The SPA can be designed and tested before Django is running. `.env.development` sets `VITE_MOCK=1`. That mock is dynamically imported and is **absent** from production builds.
 
 ```bash
-cd frontend
 npm install
 npm run dev
 ```
@@ -191,12 +187,11 @@ npm run typecheck
 npm run build
 ```
 
-`npm run build` typechecks and writes hashed assets to `frontend/dist`.
+`npm run build` typechecks and writes hashed assets to `dist/`.
 
-### Backend
+### Django API
 
 ```bash
-cd backend
 python -m venv .venv
 # Windows: .venv\Scripts\activate
 # Unix:    source .venv/bin/activate
@@ -216,7 +211,7 @@ Health check (no auth): `GET /healthz`.
 For production-shaped serving, the image entrypoint migrates only when the process is Gunicorn:
 
 ```bash
-docker build -t a7-complaints-web backend
+docker build -t a7-complaints-web .
 ```
 
 The container binds `0.0.0.0:8200` with gevent workers so SSE connections do not pin a sync worker.
@@ -275,7 +270,7 @@ All JSON routes sit under `/api/v1` and require `Authorization: Bearer <jwt>`, e
 
 Ticket numbers are allocated from a PostgreSQL sequence (`CMP-000001`, …), not `COUNT(*) + 1`.
 
-A machine-readable contract for the SPA also lives in `frontend/docs/API-REQUESTS.md`. Interactive schema is served by the backend when it is running.
+A machine-readable contract for the SPA also lives in `docs/API-REQUESTS.md`. Interactive schema is served by the backend when it is running.
 
 ---
 
@@ -300,7 +295,7 @@ These are easy to break and expensive to debug inside the CRM iframe:
 
 ## Status colours
 
-Shared by API documentation and UI (`frontend/src/lib/status.ts`):
+Shared by API documentation and UI (`src/lib/status.ts`):
 
 | Status | Colour |
 |---|---|
@@ -319,13 +314,11 @@ Timestamps are stored in UTC and rendered in `Asia/Dubai`.
 ## Testing
 
 ```bash
-# Frontend
-cd frontend
+# SPA
 npm run test
 npm run typecheck
 
-# Backend (when a local database is configured)
-cd backend
+# Django (when a local database is configured)
 pytest
 ```
 
@@ -341,7 +334,7 @@ Critical operational facts (full detail in `RUNBOOK.md` and `DEPLOY-NOTES.md`):
 
 - Sync the Vite build **into** the existing panel directory. Replacing the directory inode breaks the Docker bind mount and the handler keeps serving a stale `index.html`.
 - The image runs as uid `10001`. Host mounts for media, static, and panel must be owned by that uid.
-- Rebuild the image after generating migrations. `entrypoint.sh` migrates the code **inside** the image, not a host bind of `backend/`.
+- Rebuild the image after generating migrations. `entrypoint.sh` migrates the code **inside** the image, not a host bind of the source tree.
 - Framing is allowed only via nginx `Content-Security-Policy: frame-ancestors <CRM origin>;`. Django’s `XFrameOptionsMiddleware` is intentionally absent (`X-Frame-Options: DENY` cannot allowlist one origin).
 
 Do not restart or reconfigure unrelated services on the CRM host or the application host.
@@ -358,8 +351,8 @@ Do not restart or reconfigure unrelated services on the CRM host or the applicat
 | [`PROMPT-1-infra-and-bitrix.md`](PROMPT-1-infra-and-bitrix.md) | Infrastructure / Bitrix local-app work package |
 | [`PROMPT-2-backend.md`](PROMPT-2-backend.md) | Backend API contract |
 | [`PROMPT-3-frontend.md`](PROMPT-3-frontend.md) | Frontend work package |
-| [`frontend/README.md`](frontend/README.md) | SPA commands and bootstrap contract |
-| [`frontend/docs/API-REQUESTS.md`](frontend/docs/API-REQUESTS.md) | SPA-facing request shapes |
+| [`docs/SPA.md`](docs/SPA.md) | SPA commands and bootstrap contract |
+| [`docs/API-REQUESTS.md`](docs/API-REQUESTS.md) | SPA-facing request shapes |
 
 ---
 
