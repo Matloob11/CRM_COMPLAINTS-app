@@ -1,0 +1,80 @@
+# ---------------------------------------------------------------------------
+# Secrets — never commit these
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!**/.env.example
+# Safe to commit: enables the in-browser mock API. Contains no secrets.
+!frontend/.env.development
+# Local Vite overrides may contain portal URLs or other private values.
+frontend/.env.local
+frontend/.env.*.local
+*.pem
+*.key
+*.p12
+*.pfx
+*.secret
+id_rsa
+id_ed25519
+id_ecdsa
+credentials.json
+**/credentials
+**/.aws/
+
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.sqlite3
+
+# Django runtime artifacts
+backend/media/
+backend/staticfiles/
+backend/frontend-dist/
+
+# ---------------------------------------------------------------------------
+# Node / frontend
+# ---------------------------------------------------------------------------
+node_modules/
+frontend/dist/
+frontend/dist-ssr/
+*.tsbuildinfo
+
+# ---------------------------------------------------------------------------
+# Large / generated samples
+# ---------------------------------------------------------------------------
+screenshots/.big-upload-sample.bin
+*.big-upload-sample.bin
+
+# ---------------------------------------------------------------------------
+# OS / editor
+# ---------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ---------------------------------------------------------------------------
+# Logs and local scratch
+# ---------------------------------------------------------------------------
+*.log
+npm-debug.log*
+.turbo/
+.cache/

@@ -1,0 +1,189 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+
+    /* The horizon behind every pane. Declared here rather than on a component
+       so the blur in .glass always has the same thing to refract. */
+    --dusk-abyss: #070b16;
+    --dusk-deep: #101a38;
+    --dusk-tide: #1b3a6b;
+    --dusk-dune: #c98a3c;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply text-ink-800 font-sans text-base antialiased;
+    margin: 0;
+    background-color: var(--dusk-abyss);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* One focus treatment for the whole app: visible, never removed. Offset
+     against the dark ground rather than white, or the ring disappears. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-300 ring-offset-2;
+    --tw-ring-offset-color: rgba(7, 11, 22, 0.9);
+  }
+
+  ::selection {
+    background: rgba(53, 189, 166, 0.34);
+  }
+
+  /* Scrollbars are drawn in the glass, not on it: a solid track would cut a
+     grey stripe through the frosted panel. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background-clip: content-box;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.32);
+  }
+
+  /* Native controls default to a white page. Inside the glass they need to be
+     told, or a <select> drops a bright rectangle into the middle of a pane. */
+  select option {
+    background-color: #101a38;
+    color: #edf2fb;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /*
+   * The material.
+   *
+   * Three ingredients, and all three matter: the blur is what makes it frosted,
+   * the saturate is what keeps the amber behind it warm instead of grey, and
+   * the inset top highlight is what reads as a lit edge. Drop any one and it
+   * stops looking like glass and starts looking like a dark div.
+   */
+  .glass {
+    background-color: rgba(255, 255, 255, 0.055);
+    backdrop-filter: blur(28px) saturate(150%);
+    -webkit-backdrop-filter: blur(28px) saturate(150%);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.13),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+  }
+
+  /* Deeper panel, for surfaces that sit on top of other glass (popovers,
+     modals) and would otherwise vanish into the layer below. */
+  .glass-raised {
+    background-color: rgba(19, 28, 54, 0.72);
+    backdrop-filter: blur(40px) saturate(160%);
+    -webkit-backdrop-filter: blur(40px) saturate(160%);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.16),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.09),
+      0 24px 60px -20px rgba(3, 6, 16, 0.9);
+  }
+
+  /* Quieter fill for rows and inputs inside a pane: enough to separate from
+     the pane, not so much that a list of them turns into stripes. */
+  .glass-inset {
+    background-color: rgba(255, 255, 255, 0.04);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+
+  /*
+   * Fallback for engines without backdrop-filter. Without this the panes are
+   * nearly transparent and text lands straight on the gradient, which is the
+   * one failure mode that makes the app unusable rather than just plainer.
+   */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass {
+      background-color: rgba(16, 26, 56, 0.88);
+    }
+    .glass-raised {
+      background-color: rgba(12, 20, 42, 0.96);
+    }
+  }
+
+  .hairline {
+    border-color: rgba(255, 255, 255, 0.09);
+  }
+
+  .skeleton {
+    @apply rounded;
+    background-color: rgba(255, 255, 255, 0.06);
+    background-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.04) 0%,
+      rgba(255, 255, 255, 0.12) 40%,
+      rgba(255, 255, 255, 0.04) 80%
+    );
+    background-size: 360px 100%;
+    @apply animate-shimmer;
+  }
+
+  /* The thread ground. Barely-there so the bubbles carry the contrast. */
+  .thread-paper {
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.045) 1px, transparent 0),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0));
+    background-size:
+      22px 22px,
+      100% 200px;
+    background-repeat: repeat, no-repeat;
+  }
+
+  /* Bubble corners. A single clipped corner marks the speaker, so the bubble
+     stays one accessible node with no tail element. */
+  .bubble-out {
+    border-radius: 1.125rem 1.125rem 0.3rem 1.125rem;
+  }
+
+  .bubble-in {
+    border-radius: 1.125rem 1.125rem 1.125rem 0.3rem;
+  }
+
+  /* Keeps long unbroken strings (URLs, reference numbers) inside the bubble. */
+  .wrap-anywhere {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  /* Numerals in the dashboard are read as a column, so they are lined and
+     tabular; proportional figures make a stack of counts look ragged. */
+  .figure {
+    font-variant-numeric: tabular-nums lining-nums;
+    font-feature-settings: 'tnum' 1, 'lnum' 1;
+  }
+}

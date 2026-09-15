@@ -1,0 +1,37 @@
+FROM python:3.12-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1
+
+# ffmpeg is used only by ffprobe, to read video duration for thumbnails.
+# No transcoding happens on this box; the WhatsApp stacks need the CPU.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ffmpeg curl \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY . .
+
+RUN useradd --create-home --uid 10001 appuser \
+    && mkdir -p /media /var/tmp/uploads \
+    && chown -R appuser:appuser /app /media /var/tmp/uploads
+USER appuser
+
+EXPOSE 8000
+
+# gevent workers: the SSE endpoint holds a connection open per client, which
+# would pin a sync worker for its whole lifetime.
+CMD ["gunicorn", "config.wsgi:application", \
+     "--bind", "0.0.0.0:8000", \
+     "--worker-class", "gevent", \
+     "--workers", "4", \
+     "--worker-connections", "200", \
+     "--timeout", "3600", \
+     "--graceful-timeout", "30", \
+     "--access-logfile", "-", \
+     "--error-logfile", "-"]

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Complaints — A7 Group</title>
+    <!--
+      Production note for work package 2:
+      the Django /bitrix/handler/ response should render this same document and
+      inject the freshly minted JWT before the module script, e.g.
+
+        <script>window.__COMPLAINTS__ = { token: "<jwt>", api_base: "/api/v1" };</script>
+
+      The SPA reads it once, mirrors it into sessionStorage and sends it as
+      Authorization: Bearer. No cookies are set anywhere.
+    -->
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Complaints</title>
+
+    <!-- Bitrix JS API. Required for BX24.fitWindow(): without it the iframe
+         keeps the CRM's default height and clips the thread.
+         No Subresource Integrity hash is pinned here, deliberately: this is a
+         mutable versioned loader that Bitrix updates in place, so a pinned
+         hash would break the app on their next release rather than protect it.
+         The origin is fixed to https so it cannot be downgraded. -->
+    <script src="https://api.bitrix24.com/api/v1/"></script>
+
+    <link rel="stylesheet" href="/assets/app.css?v={{ build_id }}" />
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!-- The token is handed to the SPA here rather than set as a cookie. This
+         page is framed cross-origin by the CRM, so a cookie would be a
+         third-party cookie: blocked in Safari, being removed in Chrome. -->
+    <script id="a7-bootstrap" type="application/json">
+      {
+        "token": "{{ token|escapejs }}",
+        "userName": "{{ user_name|escapejs }}",
+        "userRole": "{{ user_role|escapejs }}",
+        "displayTimeZone": "{{ display_timezone|escapejs }}"
+      }
+    </script>
+
+    <script type="module" src="/assets/app.js?v={{ build_id }}"></script>
+  </body>
+</html>
